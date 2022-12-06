@@ -11,7 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class MainTest {
-	private static String crlf = System.getProperty("line.separator");
+	// private static String crlf = System.getProperty("line.separator");
 
 	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
@@ -46,7 +46,7 @@ public class MainTest {
 		Main.main(null);
 		StringBuffer sb = new StringBuffer();
 
-		sb.append("4");
+		sb.append("8");
 
 		assertEquals(sb.toString(), outContent.toString());
 	}

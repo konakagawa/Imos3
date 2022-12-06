@@ -26,38 +26,36 @@ public class Main {
 
 		}
 
-		// 領域の初期化
+		// 領域の初期化 area[z][y][x]
 		int[][][] area = new int[10][10][10];
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < 2; j++) {
+		for (int i = 0; i < area.length; i++) {
+			for (int j = 0; j < area[i].length; j++) {
 				Arrays.fill(area[i][j], 0);
 			}
 		}
 
 		// 1と-1をコーナーに設置
 		for (int i = 0; i < N; i++) {
-			// 下の面
 			int[] xyz = cubes[i][0];
 			int[] XYZ = cubes[i][1];
-
-			area[xyz[0]][xyz[1]][xyz[2]] += 1;
-			area[xyz[0]][XYZ[1] + 1][xyz[2]] += -1;
-			area[XYZ[0] + 1][xyz[1]][xyz[2]] += -1;
-			area[XYZ[0] + 1][XYZ[1] + 1][xyz[2]] += 1;
+			// 下の面
+			area[xyz[2]][xyz[1]][xyz[0]] += 1;
+			area[xyz[2]][XYZ[1]][xyz[0]] += -1;
+			area[xyz[2]][xyz[1]][XYZ[0]] += -1;
+			area[xyz[2]][XYZ[1]][XYZ[0]] += 1;
 			// 上の面
-
-			area[xyz[0]][xyz[1]][XYZ[2] + 1] += -1;
-			area[xyz[0]][XYZ[1] + 1][XYZ[2] + 1] += 1;
-			area[XYZ[0] + 1][xyz[1]][XYZ[2] + 1] += 1;
-			area[XYZ[0] + 1][XYZ[1] + 1][XYZ[2] + 1] += -1;
+			area[XYZ[2]][xyz[1]][xyz[0]] += -1;
+			area[XYZ[2]][XYZ[1]][xyz[0]] += 1;
+			area[XYZ[2]][xyz[1]][XYZ[0]] += 1;
+			area[XYZ[2]][XYZ[1]][XYZ[0]] += -1;
 		}
 
 		// 領域の計算
 		// x軸方向に累積和
-		for (int i = 1; i < area.length; i++) {
+		for (int i = 0; i < area.length; i++) {
 			for (int j = 0; j < area[i].length; j++) {
-				for (int k = 0; k < area[i][j].length; k++) {
-					area[i][j][k] += area[i - 1][j][k];
+				for (int k = 1; k < area[i][j].length; k++) {
+					area[i][j][k] += area[i][j][k - 1];
 				}
 			}
 		}
@@ -72,10 +70,10 @@ public class Main {
 		}
 
 		// z軸方向に累積和
-		for (int i = 0; i < area.length; i++) {
+		for (int i = 1; i < area.length; i++) {
 			for (int j = 0; j < area[i].length; j++) {
-				for (int k = 1; k < area[i][j].length; k++) {
-					area[i][j][k] += area[i][j][k - 1];
+				for (int k = 0; k < area[i][j].length; k++) {
+					area[i][j][k] += area[i - 1][j][k];
 				}
 			}
 		}
@@ -93,14 +91,9 @@ public class Main {
 			}
 
 		}
-		System.out.println(taiseki);
+		System.out.print(taiseki);
+		sc.close();
 
-	}
-
-	private static int[] parseIntArray(String str) {
-		String[] strs = str.split(" ");
-		int[] ints = Arrays.stream(strs).mapToInt(Integer::parseInt).toArray();
-		return ints;
 	}
 
 }
