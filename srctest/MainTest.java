@@ -46,6 +46,7 @@ public class MainTest {
 		Main.main(null);
 		StringBuffer sb = new StringBuffer();
 
+		// 重なっている部分の体積
 		sb.append("8");
 
 		assertEquals(sb.toString(), outContent.toString());
