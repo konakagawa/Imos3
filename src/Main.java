@@ -1,54 +1,106 @@
 
-import static org.junit.Assert.*;
+import java.util.Arrays;
+import java.util.Scanner;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+public class Main {
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+	public static void main(String[] args) {
 
-public class MainTest {
-	private static String crlf = System.getProperty("line.separator");
+		Scanner sc = new Scanner(System.in);
 
-	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-	private final StandardInputSnatcher in = new StandardInputSnatcher();
+		String line = sc.nextLine();
 
-	@BeforeClass
-	public static void setUpString() {
+		int N = Integer.parseInt(line);
+
+		// cube index
+		// 0:min 頂点、1:max 頂点
+		// x,y,z
+		int[][][] cubes = new int[N][2][3];
+		for (int i = 0; i < N; i++) {
+			line = sc.nextLine();
+			String[] str = line.split(" ");
+			for (int j = 0; j < 3; j++) {
+				cubes[i][0][j] = Integer.parseInt(str[j]);
+				cubes[i][1][j] = Integer.parseInt(str[j + 3]);
+			}
+
+		}
+
+		// 領域の初期化
+		int[][][] area = new int[10][10][10];
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < 2; j++) {
+				Arrays.fill(area[i][j], 0);
+			}
+		}
+
+		// 1と-1をコーナーに設置
+		for (int i = 0; i < N; i++) {
+			// 下の面
+			int[] xyz = cubes[i][0];
+			int[] XYZ = cubes[i][1];
+
+			area[xyz[0]][xyz[1]][xyz[2]] += 1;
+			area[xyz[0]][XYZ[1] + 1][xyz[2]] += -1;
+			area[XYZ[0] + 1][xyz[1]][xyz[2]] += -1;
+			area[XYZ[0] + 1][XYZ[1] + 1][xyz[2]] += 1;
+			// 上の面
+
+			area[xyz[0]][xyz[1]][XYZ[2] + 1] += -1;
+			area[xyz[0]][XYZ[1] + 1][XYZ[2] + 1] += 1;
+			area[XYZ[0] + 1][xyz[1]][XYZ[2] + 1] += 1;
+			area[XYZ[0] + 1][XYZ[1] + 1][XYZ[2] + 1] += -1;
+		}
+
+		// 領域の計算
+		// x軸方向に累積和
+		for (int i = 1; i < area.length; i++) {
+			for (int j = 0; j < area[i].length; j++) {
+				for (int k = 0; k < area[i][j].length; k++) {
+					area[i][j][k] += area[i - 1][j][k];
+				}
+			}
+		}
+
+		// y軸方向に累積和
+		for (int i = 0; i < area.length; i++) {
+			for (int j = 1; j < area[i].length; j++) {
+				for (int k = 0; k < area[i][j].length; k++) {
+					area[i][j][k] += area[i][j - 1][k];
+				}
+			}
+		}
+
+		// z軸方向に累積和
+		for (int i = 0; i < area.length; i++) {
+			for (int j = 0; j < area[i].length; j++) {
+				for (int k = 1; k < area[i][j].length; k++) {
+					area[i][j][k] += area[i][j][k - 1];
+				}
+			}
+		}
+
+		// 結果の出力
+		int taiseki = 0;
+		for (int i = 0; i < area.length; i++) {
+			for (int j = 0; j < area[i].length; j++) {
+				for (int k = 0; k < area[i][j].length; k++) {
+					// 一つ以上重なっている場合
+					if (area[i][j][k] > 1) {
+						taiseki++;
+					}
+				}
+			}
+
+		}
+		System.out.println(taiseki);
 
 	}
 
-	@Before
-	public void setUpStreams() {
-		System.setOut(new PrintStream(outContent));
-		System.setErr(new PrintStream(errContent));
-		System.setIn(in);
-	}
-
-	@After
-	public void cleanUpStreams() {
-		System.setOut(System.out);
-		System.setErr(System.err);
-		System.setIn(System.in);
-	}
-
-	@Test
-	public void test1() throws IOException {
-
-		in.inputln("2");
-		in.inputln("1 1 1 4 4 4");
-		in.inputln("2 2 2 5 5 5");
-
-		Main.main(null);
-		StringBuffer sb = new StringBuffer();
-
-		sb.append("4");
-
-		assertEquals(sb.toString(), outContent.toString());
+	private static int[] parseIntArray(String str) {
+		String[] strs = str.split(" ");
+		int[] ints = Arrays.stream(strs).mapToInt(Integer::parseInt).toArray();
+		return ints;
 	}
 
 }
