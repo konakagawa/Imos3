@@ -1,28 +1,54 @@
 
-import java.util.Arrays;
-import java.util.Scanner;
+import static org.junit.Assert.*;
 
-public class Main {
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 
-	public static void main(String[] args) {
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-		Scanner sc = new Scanner(System.in);
+public class MainTest {
+	private static String crlf = System.getProperty("line.separator");
 
-		String line = sc.nextLine();
+	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+	private final StandardInputSnatcher in = new StandardInputSnatcher();
 
-		System.out.print("81"+ line.substring(1));
+	@BeforeClass
+	public static void setUpString() {
 
 	}
 
-	private static int[] parseIntArray(String str) {
-		String[] strs = str.split(" ");
-		int[] ints = Arrays.stream(strs).mapToInt(Integer::parseInt).toArray();
-		return ints;
+	@Before
+	public void setUpStreams() {
+		System.setOut(new PrintStream(outContent));
+		System.setErr(new PrintStream(errContent));
+		System.setIn(in);
 	}
 
-	private static long[] parseLongArray(String str) {
-		String[] strs = str.split(" ");
-		long[] ints = Arrays.stream(strs).mapToLong(Long::parseLong).toArray();
-		return ints;
+	@After
+	public void cleanUpStreams() {
+		System.setOut(System.out);
+		System.setErr(System.err);
+		System.setIn(System.in);
 	}
+
+	@Test
+	public void test1() throws IOException {
+
+		in.inputln("2");
+		in.inputln("1 1 1 4 4 4");
+		in.inputln("2 2 2 5 5 5");
+
+		Main.main(null);
+		StringBuffer sb = new StringBuffer();
+
+		sb.append("4");
+
+		assertEquals(sb.toString(), outContent.toString());
+	}
+
 }
